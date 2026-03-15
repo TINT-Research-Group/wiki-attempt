@@ -6,6 +6,399 @@
   <title>TINT Research Wiki</title>
   <meta name="description" content="TINT Research Group Wiki Portal" />
   <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    .cover-gate.is-hidden {
+      opacity: 0;
+      transform: scale(0.985);
+      pointer-events: none;
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .portal-grid {
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .portal-grid.is-locked {
+      opacity: 0;
+      transform: translateY(24px) scale(0.985);
+      pointer-events: none;
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: min(1100px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    .portal-grid.is-unlocked {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .console-status.is-ready {
+      color: #93f4ff;
+      text-shadow: 0 0 12px rgba(147, 244, 255, 0.35);
+    }
+
+    .console-status.is-denied {
+      color: #ff8ed8;
+      text-shadow: 0 0 14px rgba(255, 142, 216, 0.4);
+    }
+
+    .console-status.is-breached {
+      color: #f3a6ff;
+      text-shadow: 0 0 14px rgba(214, 112, 255, 0.45);
+    }
+
+    .console-message.is-success {
+      color: #95fff0;
+    }
+
+    .console-message.is-error {
+      color: #ff9edd;
+    }
+
+    .console-submit {
+      cursor: pointer;
+    }
+
+    .intrusion-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(164, 62, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 20% 20%, rgba(255, 0, 230, 0.11), transparent 22%),
+        radial-gradient(circle at 80% 30%, rgba(159, 48, 255, 0.14), transparent 24%),
+        linear-gradient(180deg, rgba(12, 1, 24, 0.96), rgba(18, 2, 34, 0.98));
+      transition: opacity 220ms ease;
+    }
+
+    .intrusion-overlay.is-active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .intrusion-overlay::before,
+    .intrusion-overlay::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      pointer-events: none;
+    }
+
+    .intrusion-overlay::before {
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.06) 0 2px,
+          rgba(164, 62, 255, 0.02) 2px 6px,
+          transparent 6px 10px
+        );
+      mix-blend-mode: screen;
+      opacity: 0.3;
+      animation: intrusionScan 1.4s linear infinite;
+    }
+
+    .intrusion-overlay::after {
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(214, 112, 255, 0.28) 48%, transparent 52%),
+        linear-gradient(0deg, transparent 0%, rgba(255, 61, 190, 0.18) 48%, transparent 52%);
+      background-size: 100% 100%, 100% 100%;
+      filter: blur(1px);
+      opacity: 0.45;
+      animation: intrusionGlitch 180ms steps(2, end) infinite;
+    }
+
+    .intrusion-shell {
+      position: relative;
+      width: min(880px, calc(100vw - 48px));
+      min-height: 420px;
+      border: 1px solid rgba(213, 123, 255, 0.45);
+      border-radius: 26px;
+      padding: 32px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.012)),
+        rgba(28, 5, 46, 0.76);
+      box-shadow:
+        0 0 0 1px rgba(255, 122, 233, 0.12),
+        0 0 42px rgba(175, 71, 255, 0.24),
+        0 0 120px rgba(103, 0, 184, 0.22);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .intrusion-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255, 97, 223, 0.08) 50%, transparent 100%),
+        linear-gradient(180deg, transparent 0%, rgba(171, 67, 255, 0.12) 50%, transparent 100%);
+      mix-blend-mode: screen;
+      animation: panelPulse 1.6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .intrusion-topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255, 198, 245, 0.78);
+    }
+
+    .intrusion-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 28px;
+      margin-top: 26px;
+      align-items: stretch;
+    }
+
+    .intrusion-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .intrusion-eyebrow {
+      margin: 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255, 187, 241, 0.76);
+    }
+
+    .intrusion-title {
+      margin: 6px 0 0;
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      line-height: 0.95;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #ffd5ff;
+      text-shadow:
+        0 0 8px rgba(255, 202, 248, 0.35),
+        0 0 22px rgba(221, 79, 255, 0.38),
+        0 0 42px rgba(180, 42, 255, 0.28);
+    }
+
+    .intrusion-title.glitching {
+      animation: titleGlitch 150ms steps(2, end) infinite;
+    }
+
+    .intrusion-copy {
+      margin: 0;
+      color: rgba(248, 214, 255, 0.82);
+      font-size: 1rem;
+      line-height: 1.65;
+      max-width: 34rem;
+    }
+
+    .intrusion-console {
+      border: 1px solid rgba(220, 128, 255, 0.34);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(20, 2, 36, 0.52);
+      box-shadow: inset 0 0 24px rgba(232, 121, 255, 0.08);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .intrusion-line {
+      display: flex;
+      gap: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      color: rgba(255, 200, 246, 0.9);
+      font-size: 0.92rem;
+      line-height: 1.8;
+    }
+
+    .intrusion-line .tag {
+      color: #ff7ce7;
+    }
+
+    .intrusion-line .value {
+      color: #f8d6ff;
+    }
+
+    .intrusion-right {
+      position: relative;
+      border: 1px solid rgba(213, 123, 255, 0.28);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at center, rgba(220, 95, 255, 0.2), transparent 46%),
+        rgba(18, 3, 32, 0.62);
+      min-height: 280px;
+      overflow: hidden;
+      box-shadow: inset 0 0 32px rgba(212, 98, 255, 0.08);
+    }
+
+    .sigil,
+    .sigil::before,
+    .sigil::after {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(235, 165, 255, 0.34);
+      content: "";
+    }
+
+    .sigil {
+      inset: 50% auto auto 50%;
+      width: 210px;
+      height: 210px;
+      transform: translate(-50%, -50%);
+      box-shadow:
+        0 0 24px rgba(219, 104, 255, 0.18),
+        inset 0 0 18px rgba(255, 193, 246, 0.12);
+      animation: sigilRotate 9s linear infinite;
+    }
+
+    .sigil::before {
+      inset: 20px;
+      border-style: dashed;
+      animation: sigilRotateReverse 7s linear infinite;
+    }
+
+    .sigil::after {
+      inset: -18px;
+      opacity: 0.5;
+      animation: sigilPulse 1.5s ease-in-out infinite;
+    }
+
+    .sigil-cross,
+    .sigil-cross::before,
+    .sigil-cross::after {
+      position: absolute;
+      content: "";
+      background: linear-gradient(180deg, rgba(255, 197, 246, 0.88), rgba(180, 65, 255, 0.22));
+      box-shadow: 0 0 18px rgba(224, 111, 255, 0.25);
+    }
+
+    .sigil-cross {
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      height: 220px;
+      transform: translate(-50%, -50%) rotate(24deg);
+    }
+
+    .sigil-cross::before {
+      inset: auto auto 50% 50%;
+      width: 220px;
+      height: 2px;
+      transform: translate(-50%, 50%);
+    }
+
+    .sigil-cross::after {
+      inset: auto auto 50% 50%;
+      width: 160px;
+      height: 2px;
+      transform: translate(-50%, 50%) rotate(90deg);
+      opacity: 0.65;
+    }
+
+    .deny-flash {
+      position: absolute;
+      inset: auto 24px 24px auto;
+      font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #ffd3fb;
+      text-shadow:
+        0 0 16px rgba(255, 196, 247, 0.36),
+        0 0 30px rgba(224, 83, 255, 0.38);
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    .deny-flash.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+
+    .cover-gate.is-shaking .gate-panel {
+      animation: gateShake 420ms ease;
+    }
+
+    @keyframes intrusionScan {
+      from { transform: translateY(-4%); }
+      to { transform: translateY(4%); }
+    }
+
+    @keyframes intrusionGlitch {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-6px, 2px); }
+      50% { transform: translate(5px, -3px); }
+      75% { transform: translate(-3px, 4px); }
+    }
+
+    @keyframes titleGlitch {
+      0%, 100% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+      25% { transform: translate(-2px, 1px); }
+      50% { transform: translate(3px, -2px); filter: hue-rotate(10deg); }
+      75% { transform: translate(-2px, 2px); }
+    }
+
+    @keyframes panelPulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.7; }
+    }
+
+    @keyframes sigilRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes sigilRotateReverse {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    @keyframes sigilPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.42;
+      }
+      50% {
+        transform: scale(1.06);
+        opacity: 0.75;
+      }
+    }
+
+    @keyframes gateShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(7px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(4px); }
+    }
+
+    @media (max-width: 860px) {
+      .intrusion-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .intrusion-right {
+        min-height: 220px;
+      }
+
+      .deny-flash {
+        inset: auto 18px 18px auto;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="page-shell">
@@ -15,29 +408,57 @@
     <div class="scanline"></div>
 
     <main class="portal">
-      <!-- Cover Lock -->
-      <section class="cover-lock" aria-label="Research gateway lock">
-        <div class="lock-frame">
-          <div class="lock-topline">TINT.Gateway.01 · Security Layer · Verified Protocol</div>
+      <section class="cover-gate" id="coverGate" aria-label="TINT access gateway">
+        <div class="gate-panel">
+          <div class="gate-topline">TINT.Gateway.01 · Authenticated Research Access</div>
 
-          <div class="lock-core">
-            <div class="lock-ring">
-              <div class="lock-ring-inner"></div>
-              <div class="lock-center"></div>
+          <div class="gate-hero">
+            <div class="gate-title-block">
+              <p class="gate-kicker">Trustworthy AI · Agent Network · Reliable AI Infra</p>
+              <h1 class="gate-title">TINT Research Wiki</h1>
+              <p class="gate-subtitle">
+                Enter the control console passphrase to unlock the internal navigation portal.
+              </p>
+            </div>
+
+            <div class="gate-visual" aria-hidden="true">
+              <div class="lock-ring">
+                <div class="lock-ring-inner"></div>
+                <div class="lock-center"></div>
+              </div>
             </div>
           </div>
 
-          <div class="lock-meta">
-            <div class="lock-label">Iris Access / Research Wiki Gateway</div>
-            <div class="lock-status">
-              <span class="status-dot"></span>
-              <span>Standby · Authorized Navigation Ready</span>
+          <div class="console-shell" aria-labelledby="consoleTitle">
+            <div class="console-header">
+              <span id="consoleTitle">Control Console</span>
+              <span class="console-status is-ready" id="consoleStatus">LOCKED</span>
             </div>
+
+            <form class="console-body" id="unlockForm" autocomplete="off">
+              <label class="console-label" for="accessCode">Passphrase</label>
+              <div class="console-input-row">
+                <span class="console-prompt">&gt;</span>
+                <input
+                  id="accessCode"
+                  name="accessCode"
+                  type="password"
+                  inputmode="text"
+                  spellcheck="false"
+                  autocapitalize="characters"
+                  placeholder="Enter access key"
+                  aria-describedby="consoleHint consoleMessage"
+                />
+                <button type="submit" class="console-submit">Enter</button>
+              </div>
+              <p class="console-hint" id="consoleHint">Authorized keyword required.</p>
+              <p class="console-message" id="consoleMessage" aria-live="polite"></p>
+            </form>
           </div>
         </div>
       </section>
 
-      <nav class="portal-grid" aria-label="Wiki navigation">
+      <nav class="portal-grid is-locked" id="portalGrid" aria-label="Wiki navigation" aria-hidden="true">
         <a class="portal-btn" href="members.html">
           <span class="btn-label">Members</span>
         </a>
@@ -59,12 +480,155 @@
         </a>
 
         <a class="portal-btn" href="reports.html">
-          <span class="btn-label">Meetings & Reports</span>
+          <span class="btn-label">Meetings &amp; Reports</span>
         </a>
       </nav>
     </main>
   </div>
 
-  <script src="assets/js/main.js"></script>
+  <div class="intrusion-overlay" id="intrusionOverlay" aria-hidden="true">
+    <div class="intrusion-shell">
+      <div class="intrusion-topline">
+        <span>System Integrity Compromised</span>
+        <span>Channel Override · Purple Trace Active</span>
+      </div>
+
+      <div class="intrusion-grid">
+        <div class="intrusion-left">
+          <div>
+            <p class="intrusion-eyebrow">Unauthorized Console Activity</p>
+            <h2 class="intrusion-title glitching" id="intrusionTitle">Access Deny</h2>
+          </div>
+
+          <p class="intrusion-copy">
+            External intrusion signature detected. Terminal authority revoked. Returning to gateway shell.
+          </p>
+
+          <div class="intrusion-console" aria-hidden="true">
+            <div class="intrusion-line"><span class="tag">[trace]</span><span class="value">purple-channel override initiated</span></div>
+            <div class="intrusion-line"><span class="tag">[check]</span><span class="value">credential mismatch · encrypted route severed</span></div>
+            <div class="intrusion-line"><span class="tag">[response]</span><span class="value">ui lockdown · session rollback pending</span></div>
+          </div>
+        </div>
+
+        <div class="intrusion-right" aria-hidden="true">
+          <div class="sigil"></div>
+          <div class="sigil-cross"></div>
+        </div>
+      </div>
+
+      <div class="deny-flash" id="denyFlash">Access Deny</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const PASSCODE = "TINT";
+      const buttons = document.querySelectorAll(".portal-btn");
+      const coverGate = document.getElementById("coverGate");
+      const portalGrid = document.getElementById("portalGrid");
+      const unlockForm = document.getElementById("unlockForm");
+      const accessCode = document.getElementById("accessCode");
+      const consoleMessage = document.getElementById("consoleMessage");
+      const consoleStatus = document.getElementById("consoleStatus");
+      const intrusionOverlay = document.getElementById("intrusionOverlay");
+      const denyFlash = document.getElementById("denyFlash");
+
+      let breachAnimating = false;
+
+      function initButtons() {
+        buttons.forEach((button, index) => {
+          button.style.animationDelay = `${index * 70}ms`;
+          button.addEventListener("mouseenter", () => button.classList.add("is-active"));
+          button.addEventListener("mouseleave", () => button.classList.remove("is-active"));
+          button.addEventListener("focus", () => button.classList.add("is-active"));
+          button.addEventListener("blur", () => button.classList.remove("is-active"));
+        });
+      }
+
+      function setStatus(text, state) {
+        if (!consoleStatus) return;
+        consoleStatus.textContent = text;
+        consoleStatus.classList.remove("is-ready", "is-denied", "is-breached");
+        if (state) consoleStatus.classList.add(state);
+      }
+
+      function setMessage(text, type = "") {
+        if (!consoleMessage) return;
+        consoleMessage.textContent = text;
+        consoleMessage.classList.remove("is-error", "is-success");
+        if (type) consoleMessage.classList.add(type);
+      }
+
+      function unlockPortal() {
+        coverGate.classList.add("is-hidden");
+        portalGrid.classList.remove("is-locked");
+        portalGrid.classList.add("is-unlocked");
+        portalGrid.setAttribute("aria-hidden", "false");
+      }
+
+      function resetToCover() {
+        portalGrid.classList.remove("is-unlocked");
+        portalGrid.classList.add("is-locked");
+        portalGrid.setAttribute("aria-hidden", "true");
+        coverGate.classList.remove("is-hidden", "is-shaking");
+        intrusionOverlay.classList.remove("is-active");
+        intrusionOverlay.setAttribute("aria-hidden", "true");
+        denyFlash.classList.remove("is-visible");
+        setStatus("LOCKED", "is-ready");
+        setMessage("", "");
+        accessCode.value = "";
+        accessCode.focus();
+        breachAnimating = false;
+      }
+
+      function playDeniedSequence() {
+        if (breachAnimating) return;
+        breachAnimating = true;
+
+        coverGate.classList.add("is-shaking");
+        setStatus("BREACHED", "is-breached");
+        setMessage("Unauthorized string detected. Intrusion response engaged.", "is-error");
+
+        window.setTimeout(() => {
+          intrusionOverlay.classList.add("is-active");
+          intrusionOverlay.setAttribute("aria-hidden", "false");
+        }, 180);
+
+        window.setTimeout(() => {
+          setStatus("DENIED", "is-denied");
+          denyFlash.classList.add("is-visible");
+        }, 900);
+
+        window.setTimeout(() => {
+          resetToCover();
+        }, 2400);
+      }
+
+      initButtons();
+      accessCode.focus();
+
+      unlockForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (breachAnimating) return;
+
+        const value = accessCode.value.trim().toUpperCase();
+        if (value === PASSCODE) {
+          setStatus("UNLOCKED", "is-ready");
+          setMessage("Access granted. Portal unlocked.", "is-success");
+          unlockPortal();
+          return;
+        }
+
+        playDeniedSequence();
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key.toLowerCase() === "h") {
+          window.location.href = "index.html";
+        }
+      });
+    });
+  </script>
 </body>
 </html>
