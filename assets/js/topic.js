@@ -9,11 +9,33 @@ const researchData = [
     ]
   },
   {
+    person: "Yue HUANG",
+    topics: [
+      "Internet Security",
+      "Blockchain Security",
+      "Agent Security",
+      "Formal Method"
+    ]
+  },
+  {
+    person: "Junfeng WANG",
+    topics: [
+      "ML System",
+      "AI Infra",
+      "High Performance Network",
+      "Operating System",
+      "HPC",
+      "Compiler",
+      "RISC-V"
+    ]
+  },
+  {
     person: "Yanlin YU",
     topics: [
-      "Agent Network",
-      "RAG Security",
-      "Agent Memory"
+      "Agent Security",
+      "Formal Method",
+      "AI Collusion",
+      "Multi-Agent System"
     ]
   }
 ];
