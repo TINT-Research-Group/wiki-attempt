@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Topic Network | Group Wiki</title>
-  <link rel="stylesheet" href="assets/css/topic.css" />
+  <link rel="stylesheet" href="../assets/css/topic.css" />
 
-  <!-- vis-network -->
   <script
-    type="text/javascript"
     src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+    defer
   ></script>
+  <script src="../assets/js/topic.js" defer></script>
 </head>
 <body>
   <div class="topic-page">
-    <div class="bg-grid"></div>
-    <div class="bg-glow bg-glow-1"></div>
-    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
 
     <header class="topic-header">
       <div class="title-wrap">
@@ -24,7 +24,7 @@
         <p>People ↔ Topics multi-to-multi visualization</p>
       </div>
 
-      <div class="toolbar" aria-label="view mode switch">
+      <div class="toolbar" aria-label="View mode switch">
         <button id="modePeopleBtn" class="mode-btn active" type="button">
           People View
         </button>
@@ -35,16 +35,16 @@
     </header>
 
     <main class="topic-layout">
-      <section class="panel network-panel">
+      <section class="panel network-panel" aria-labelledby="network-title">
         <div class="panel-head">
-          <span class="panel-title">Network Graph</span>
+          <span id="network-title" class="panel-title">Network Graph</span>
         </div>
-        <div id="network"></div>
+        <div id="network" aria-label="Research relationship network graph"></div>
       </section>
 
-      <section class="panel info-panel">
+      <section class="panel info-panel" aria-labelledby="explorer-title">
         <div class="panel-head">
-          <span class="panel-title">Relationship Explorer</span>
+          <span id="explorer-title" class="panel-title">Relationship Explorer</span>
         </div>
 
         <div id="selectionMeta" class="selection-meta">
@@ -69,7 +69,5 @@
       </section>
     </main>
   </div>
-
-  <script src="assets/js/topic.js"></script>
 </body>
 </html>
