@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Topic Network | Group Wiki</title>
+  <link rel="stylesheet" href="assets/css/topic.css" />
+
+  <!-- vis-network -->
+  <script
+    type="text/javascript"
+    src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+  ></script>
+</head>
+<body>
+  <div class="topic-page">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <header class="topic-header">
+      <div class="title-wrap">
+        <h1>Research Relationship Network</h1>
+        <p>People ↔ Topics multi-to-multi visualization</p>
+      </div>
+
+      <div class="toolbar" aria-label="view mode switch">
+        <button id="modePeopleBtn" class="mode-btn active" type="button">
+          People View
+        </button>
+        <button id="modeTopicBtn" class="mode-btn" type="button">
+          Topic View
+        </button>
+      </div>
+    </header>
+
+    <main class="topic-layout">
+      <section class="panel network-panel">
+        <div class="panel-head">
+          <span class="panel-title">Network Graph</span>
+        </div>
+        <div id="network"></div>
+      </section>
+
+      <section class="panel info-panel">
+        <div class="panel-head">
+          <span class="panel-title">Relationship Explorer</span>
+        </div>
+
+        <div id="selectionMeta" class="selection-meta">
+          Click a node or an edge to inspect the relationship.
+        </div>
+
+        <div class="info-body">
+          <div class="info-block">
+            <h2>Tree View</h2>
+            <div id="treeContainer" class="tree-container">
+              <div class="empty-state">No selection yet.</div>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <h2>Detail</h2>
+            <div id="detailContainer" class="detail-container">
+              <div class="empty-state">No detail yet.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="assets/js/topic.js"></script>
+</body>
+</html>
