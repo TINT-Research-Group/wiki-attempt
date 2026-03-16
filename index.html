@@ -191,6 +191,13 @@
       transition: opacity 0.7s ease, transform 0.7s ease, visibility 0.7s ease;
     }
 
+    .app-screen {
+      min-height: calc(100vh - 48px);
+      display: grid;
+      place-items: center;
+      padding: 20px 0;
+    }
+
     body.app-mode {
       padding-top: 24px;
     }
@@ -631,6 +638,8 @@
       grid-template-rows: repeat(2, minmax(150px, 1fr));
       gap: 22px;
       align-items: stretch;
+      align-content: center;
+      justify-content: center;
     }
 
     .portal-link {
@@ -678,11 +687,6 @@
       box-shadow: 0 0 0 1px rgba(191, 227, 255, 0.18), 0 0 28px rgba(114, 242, 255, 0.16);
     }
 
-    .portal-link.is-absorbing {
-      z-index: 20;
-      pointer-events: none;
-      animation: portalAbsorb 980ms cubic-bezier(.2,.82,.12,1) forwards;
-    }
 
     .portal-link::before {
       content: "";
@@ -1078,36 +1082,15 @@
       100% { transform: translate(0,0); }
     }
 
-    @keyframes portalAbsorb {
-      0% {
-        transform: translate3d(0, 0, 0) scale(1);
-        opacity: 1;
-        filter: blur(0);
-        clip-path: inset(0 round 28px);
-      }
-      18% {
-        transform: translate3d(12px, 0, 0) scale(1.03);
-        opacity: 1;
-      }
-      68% {
-        transform: translate3d(var(--absorb-x, 320px), var(--absorb-y, 0px), 0) scale(0.28);
-        opacity: 0.84;
-        filter: blur(1.5px);
-        clip-path: inset(0 0 0 0 round 999px);
-      }
-      100% {
-        transform: translate3d(var(--absorb-x, 320px), var(--absorb-y, 0px), 0) scale(0.04);
-        opacity: 0;
-        filter: blur(9px);
-        clip-path: inset(49% 0 49% 0 round 999px);
-      }
-    }
 
 
     @media (max-width: 980px) {
       .entry-card { padding: 36px 20px 34px; }
       .hud-top-left, .hud-top-right, .hud-bottom-left, .hud-bottom-right {
         font-size: 10px;
+      }
+      .app-screen {
+        min-height: calc(100vh - 36px);
       }
       .portal-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
     }
@@ -1121,7 +1104,15 @@
       .hud-top-left, .hud-bottom-left { left: 18px; }
       .hud-top-right, .hud-bottom-right { right: 18px; }
       .boot-log { width: 100%; }
-      .portal-grid { grid-template-columns: 1fr; }
+      .app-screen {
+        display: block;
+        min-height: auto;
+        padding: 0;
+      }
+      .portal-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: none;
+      }
       .portal-link { min-height: 132px; }
     }
 
@@ -1276,10 +1267,7 @@
       const enterBtn = document.getElementById('enter-portal');
       const entryCode = document.getElementById('entry-code');
       const entryError = document.getElementById('entry-error');
-      const portalLinks = Array.from(document.querySelectorAll('.portal-link'));
       const PASSCODE = 'hkustgz';
-      const ABSORB_DURATION = 980;
-      let isNavigating = false;
       if (!enterBtn || !entryCode || !entryError) return;
 
       function resetHackState() {
@@ -1327,44 +1315,6 @@
         triggerHack();
       }
 
-      function navigateWithAbsorb(link) {
-        if (!link || isNavigating) return;
-        isNavigating = true;
-
-        const rect = link.getBoundingClientRect();
-        const targetX = window.innerWidth - rect.right;
-        const targetY = window.innerHeight / 2 - (rect.top + rect.height / 2);
-
-        link.style.setProperty('--absorb-x', `${targetX}px`);
-        link.style.setProperty('--absorb-y', `${targetY}px`);
-        link.classList.add('is-absorbing');
-
-        portalLinks.forEach(function (item) {
-          if (item !== link) {
-            item.style.transition = 'opacity 240ms ease, filter 240ms ease';
-            item.style.opacity = '0.32';
-            item.style.filter = 'blur(1px)';
-          }
-        });
-
-        window.setTimeout(function () {
-          const href = link.getAttribute('href');
-          if (!href) return;
-          const target = link.getAttribute('target');
-          if (target === '_blank') {
-            window.open(href, '_blank', 'noopener');
-            isNavigating = false;
-            link.classList.remove('is-absorbing');
-            portalLinks.forEach(function (item) {
-              item.style.opacity = '';
-              item.style.filter = '';
-              item.style.transition = '';
-            });
-            return;
-          }
-          window.location.href = href;
-        }, ABSORB_DURATION);
-      }
 
       enterBtn.addEventListener('click', handleAttempt);
       entryCode.addEventListener('keydown', function (event) {
@@ -1377,12 +1327,6 @@
         if (entryError.textContent) entryError.textContent = '';
       });
 
-      portalLinks.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-          event.preventDefault();
-          navigateWithAbsorb(link);
-        });
-      });
     })();
   </script>
   <script src="assets/js/main.js"></script>
