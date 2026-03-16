@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key.toLowerCase() === "h") {
+    if (event.key.toLowerCase() === "*") {
       window.location.href = "index.html";
     }
   });
