@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources Hub | TINT Group Wiki</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/resource.css" />
+</head>
+<body>
+  <div class="resource-page">
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <header class="resource-header">
+      <div class="title-wrap">
+        <h1>Resources Hub</h1>
+        <p>Gateway for reusable materials, records, and group knowledge assets.</p>
+      </div>
+
+      <div class="header-actions" aria-label="resource navigation">
+        <a class="nav-btn active" href="res.html">Resource</a>
+        <a class="nav-btn" href="rec.html">Record</a>
+        <a class="nav-btn" href="../../index.html">Home</a>
+      </div>
+    </header>
+
+    <main class="resource-layout">
+      <section class="panel hero-panel">
+        <div class="panel-head">
+          <span class="panel-title">Resource Gateway</span>
+          <span class="panel-subtitle">Static knowledge and reusable assets</span>
+        </div>
+
+        <div class="hero-body">
+          <div class="hero-copy">
+            <div class="hero-badges">
+              <span class="badge">Sci-fi UI</span>
+              <span class="badge">Topic-page aligned</span>
+              <span class="badge">Expandable structure</span>
+            </div>
+
+            <h2>Central access point for documents, references, and archived records.</h2>
+            <p>
+              This page is designed as the landing panel under the <strong>Resources</strong> entry.
+              It keeps the same visual language as <strong>topic.html</strong> while shifting the
+              information architecture from graph exploration to a resource-oriented navigation hub.
+            </p>
+            <p>
+              At the current stage, two sub-modules are exposed: <strong>Resource</strong> for reusable
+              knowledge assets and <strong>Record</strong> for historical logs, notes, or structured archives.
+            </p>
+          </div>
+
+          <div class="card-grid">
+            <article class="resource-card">
+              <div>
+                <span class="card-kicker">Module 01</span>
+                <h3>Resource</h3>
+                <p>
+                  Entry for curated references, shared files, guides, datasets, templates,
+                  and other reusable materials intended for repeated access.
+                </p>
+                <div class="card-meta">
+                  <span class="meta-pill">Knowledge Base</span>
+                  <span class="meta-pill">Templates</span>
+                  <span class="meta-pill">Links</span>
+                </div>
+              </div>
+
+              <div class="card-cta">
+                <a class="card-link" href="res.html">Open Resource Hub →</a>
+              </div>
+            </article>
+
+            <article class="resource-card">
+              <div>
+                <span class="card-kicker">Module 02</span>
+                <h3>Record</h3>
+                <p>
+                  Entry for research records, meeting notes, archived weekly materials,
+                  snapshots, and traceable historical content produced over time.
+                </p>
+                <div class="card-meta">
+                  <span class="meta-pill">Weekly Logs</span>
+                  <span class="meta-pill">Archives</span>
+                  <span class="meta-pill">History</span>
+                </div>
+              </div>
+
+              <div class="card-cta">
+                <a class="card-link" href="rec.html">Go to Record Page →</a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel info-panel">
+        <div class="panel-head">
+          <span class="panel-title">Explorer</span>
+          <span class="panel-subtitle">Structure overview</span>
+        </div>
+
+        <div class="selection-meta">
+          Current page: <strong>pages/resources/res.html</strong><br />
+          Recommended homepage routing: <strong>Resources → pages/resources/res.html</strong>
+        </div>
+
+        <div class="info-body">
+          <section class="info-block">
+            <h2>Suggested Tree</h2>
+            <ul class="tree-root">
+              <li><strong>Resources</strong>
+                <ul>
+                  <li><strong>Resource</strong>: guides / papers / templates / datasets</li>
+                  <li><strong>Record</strong>: reports / snapshots / meeting records</li>
+                </ul>
+              </li>
+            </ul>
+          </section>
+
+          <section class="info-block">
+            <h2>Page Notes</h2>
+            <ul class="detail-list">
+              <li><strong>Visual style:</strong> aligned with topic.html dark panel + glow style.</li>
+              <li><strong>Primary role:</strong> a category gateway, not a detail page yet.</li>
+              <li><strong>Scalability:</strong> easy to extend to cards, tables, or searchable lists later.</li>
+            </ul>
+          </section>
+
+          <section class="info-block">
+            <h2>Quick Actions</h2>
+            <ul class="quick-list">
+              <li><a class="quick-btn active" href="res.html">Stay on Resource</a></li>
+              <li><a class="quick-btn" href="rec.html">Open Record</a></li>
+              <li><a class="quick-btn" href="../../pages/topic.html">Back to Topics</a></li>
+            </ul>
+            <p class="info-note">
+              This layout intentionally mirrors the information density of the topic page:
+              one dominant content panel on the left and one supporting explorer panel on the right.
+            </p>
+          </section>
+        </div>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>
